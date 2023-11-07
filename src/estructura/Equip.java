@@ -1,6 +1,7 @@
 package estructura;
 
 public class Equip implements Comparable<Equip>{
+
     private String nombre; // 队伍名称
     private int puntuacion; // 得分
 
@@ -27,5 +28,9 @@ public class Equip implements Comparable<Equip>{
 
     public boolean haJugado() {
         return puntuacion != -1; // 返回一个布尔值，表示队伍是否已经进行比赛
+    }
+
+    public int getPuntuacion() {
+        return puntuacion;
     }
 }

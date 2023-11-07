@@ -14,11 +14,7 @@ public class Main {
             Equip equip3 = new Equip("Equip 3");
             Equip equip4 = new Equip("Equip 4");
 
-            // 插入队伍节点到二叉树
-            arbre.inserir(equip1);
-            arbre.inserir(equip2);
-            arbre.inserir(equip3);
-            arbre.inserir(equip4);
+
 
             // 显示整个树的内容
             System.out.println("整个树的内容：");
