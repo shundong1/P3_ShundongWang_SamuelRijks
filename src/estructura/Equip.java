@@ -9,8 +9,9 @@ public class Equip implements Comparable<Equip>{
         this.nombre = nombre;
         this.puntuacion = -1; // 默认分数为-1表示比赛未进行
     }
-    public Equip(){
-        this.puntuacion = -1;
+    public Equip(String nombre,int a){
+        this.nombre=nombre;
+        this.puntuacion = a;
     }
 
     public void setPuntuacion(int puntuacion) {
