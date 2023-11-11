@@ -26,7 +26,7 @@ public class Main {
 
             System.out.println("Introduzca los nombres de todos los equipos, separados por punto y coma:");
             String input = scanner.next();
-            String[] nombresEquipos = input.split(";");
+            String[] nombresEquipos = input.split("[;,\\s]+"); // 使用正则表达式，支持分号和空格
 
             System.out.println("Introduzca el número de rondas:");
             int rounds = scanner.nextInt();
@@ -35,11 +35,14 @@ public class Main {
         } else if (choice == 2) {
             // 从文件中读取二叉树
             // TODO: 添加从文件读取的逻辑，可以调用相应的方法
+            System.out.println("Introduzca el nombre del archivo que contiene el torneo existente:");
+            String nombreArchivo = scanner.next();
+            arbre = arbre.cargarTorneigDesdeArchivo(nombreArchivo);
         } else {
             System.out.println("Las opciones son sólo 1 ó 2.");
             return;
         }
-
+        arbre.mostrarArbre();
         // 显示当前轮次
         System.out.println("请输入当前轮次：");
         int currentRound = scanner.nextInt();
@@ -54,5 +57,6 @@ public class Main {
 
         // 最终保存树到文件
         // TODO: 添加保存树到文件的逻辑，可以调用相应的方法
+        arbre.guardarTorneigEnArchivo("text.txt");
     }
 }
