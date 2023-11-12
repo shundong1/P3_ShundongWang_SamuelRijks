@@ -47,11 +47,11 @@ public class ArbreBinari implements Serializable {
     public ArbreBinari(List<String> nombresEquipos,String nombresFitxer) {
         //这个是创建一个新的锦标赛，新的文件，根据输入团队的数量创建比赛
 
-        int profunditat = 2 * nombresEquipos.size() - 1;
+        int profunditat = (int) ((Math.log(nombresEquipos.size()) / Math.log(2)) + 1);;
         arrel=crearArbreRecursivament(nombresEquipos,profunditat);
 
         // 创建新文件
-        File nuevoArchivo = new File(nombresFitxer);
+        /*File nuevoArchivo = new File(nombresFitxer);
 
         try {
             if (nuevoArchivo.createNewFile()) {
@@ -62,7 +62,7 @@ public class ArbreBinari implements Serializable {
         } catch (IOException e) {
             System.out.println("创建文件时出现错误：" + e.getMessage());
             e.printStackTrace();
-        }
+        }*/
 
     }
 
@@ -84,7 +84,8 @@ public class ArbreBinari implements Serializable {
             // 你需要根据文件内容的格式来解析数据并构建树
             // 下面的示例代码仅用于说明，并假设文件中每行包含一个队伍的名称
             String[] nomsEquips = linia.split(","); // 假设数据使用逗号分隔
-            int profunditat = (int) Math.pow(2, a + 2) - 1;
+            int profunditat = (int) Math.pow(2, a+1) - 1;
+
 
             // 创建树
             arrel=crearArbreRecursivament(new ArrayList<>(Arrays.asList(nomsEquips)), profunditat);
@@ -106,7 +107,7 @@ public class ArbreBinari implements Serializable {
         node.dret = crearArbreRecursivament(nomsEquips, profunditat - 1);
 
         // 当遍历到树的最后节点时，创建 Equip 替代该节点
-        if (profunditat == 1) {
+        if (profunditat == 1 && node.esq == null && node.dret == null) {
             node.contingut = new Equip(nomsEquips.remove(0).trim());
         }
 
@@ -145,7 +146,7 @@ public class ArbreBinari implements Serializable {
     private void mostrarRecursivament(Node<Equip> node, int i, int ronda) {
         if (node != null) {
             if (i == ronda) {
-                System.out.println("Ronda" + ronda + ": ");
+                System.out.println("Ronda" + ronda + ": "+node.contingut);
             }
             mostrarRecursivament(node.esq, i + 1, ronda);
             mostrarRecursivament(node.dret, i + 1, ronda);
@@ -186,7 +187,7 @@ public class ArbreBinari implements Serializable {
 
     // 递归计算树的深度
     private int calculateProfunditatRecursivament(Node<Equip> node) {
-        if (node == null|| node.contingut == null) {
+        if (node == null|| node.contingut != null) {
             return 0;
         } else {
             int esqProfunditat = calculateProfunditatRecursivament(node.esq);
@@ -198,5 +199,23 @@ public class ArbreBinari implements Serializable {
     // 请求比赛结果的方法
     public void demanarResultats() {
         // 实现你的逻辑
+    }
+    //可以删除
+    public void mostrarArbre() {
+        mostrarArbreRecursivament(arrel, 0);
+    }
+
+    private void mostrarArbreRecursivament(Node<Equip> node, int nivel) {
+        if (node != null) {
+            mostrarArbreRecursivament(node.dret, nivel + 1);
+
+            for (int i = 0; i < nivel; i++) {
+                System.out.print("    "); // 缩进，使树形结构更清晰
+            }
+
+            System.out.println(node.contingut);
+
+            mostrarArbreRecursivament(node.esq, nivel + 1);
+        }
     }
 }

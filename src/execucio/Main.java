@@ -1,7 +1,7 @@
 package execucio;
 
 import estructura.ArbreBinari;
-import estructura.Equip;
+
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +50,13 @@ public class Main {
             }
 
         } while (opcio != 1 && opcio != 2);
-
+        //打印树
+        arbreBinari.mostrarArbre();
         //显示现在是第几轮
         int rondaActual = arbreBinari.rondaActual();
         System.out.println("Ronda actual: " + rondaActual);
+
+        runMainProgram(arbreBinari,rondaActual);
 
 
         scanner.close();
@@ -67,6 +70,38 @@ public class Main {
         } else {
             return new ArrayList<>(List.of(equiposArray));
         }
+    }
+    private static void runMainProgram(ArbreBinari arbreBinari,int ronda) {
+        Scanner scanner = new Scanner(System.in);
+
+
+        int opcion;
+
+        do {
+            System.out.println("Opciones:");
+            System.out.println("1 muestra una ronda");
+            System.out.println("2 introducir resultados en la ronda actual");
+            System.out.println("3 guardar el árbol y salir");
+            System.out.print("Elija una opción (1, 2 o 3): ");
+
+            opcion = scanner.nextInt();
+            scanner.nextLine(); // 消耗换行符
+
+            if (opcion == 1) {
+                // Muestra una ronda
+                arbreBinari.mostrar(ronda);
+
+            } else if (opcion == 2) {
+                // Introducir resultados en la ronda actual
+                // 在这里调用相应的方法
+            } else if (opcion == 3) {
+                // Guardar el árbol y salir
+                // 在这里调用保存树到文件的方法
+                System.out.println("Saliendo del programa. ¡Hasta luego!");
+            } else {
+                System.out.println("Opción no válida. Por favor, elija 1, 2 o 3.");
+            }
+        } while (opcion != 3);
     }
 }
 
