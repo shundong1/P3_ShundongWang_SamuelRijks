@@ -19,22 +19,18 @@ public class ArbreBinari implements Serializable {
         }
 
         // 添加 preorder 方法
-        public void preorder(BufferedWriter buw, int nivel) throws Exception {
+        private void preorderWrite(BufferedWriter buw) throws Exception {
             if (contingut != null) {
-                // 输出当前节点的内容
-                for (int i = 0; i < nivel; i++) {
-                    buw.write("    "); // 缩进，使树形结构更清晰
+                buw.write(contingut.toSave());
+                if(esq != null ){
+                    buw.newLine();
+                    esq.preorderWrite(buw);
                 }
-                buw.write(contingut.toString());
-                buw.newLine();
+                if(dret != null){
+                    buw.newLine();
+                    dret.preorderWrite(buw);
+                }
 
-                // 递归左右子树
-                if (esq != null) {
-                    esq.preorder(buw, nivel + 1);
-                }
-                if (dret != null) {
-                    dret.preorder(buw, nivel + 1);
-                }
             }
         }
     }
@@ -44,25 +40,11 @@ public class ArbreBinari implements Serializable {
     private int profunditat;
 
     // 构造函数，接受一个字符串数组作为参数
-    public ArbreBinari(List<String> nombresEquipos,String nombresFitxer) {
+    public ArbreBinari(List<String> nombresEquipos) {
         //这个是创建一个新的锦标赛，新的文件，根据输入团队的数量创建比赛
 
-        int profunditat = (int) ((Math.log(nombresEquipos.size()) / Math.log(2)) + 1);;
+        this.profunditat = (int) ((Math.log(nombresEquipos.size()) / Math.log(2)) + 1);;
         arrel=crearArbreRecursivament(nombresEquipos,profunditat);
-
-        // 创建新文件
-        /*   File nuevoArchivo = new File(nombresFitxer);
-
-        try {
-            if (nuevoArchivo.createNewFile()) {
-                System.out.println("新文件已创建：" + nuevoArchivo.getName());
-            } else {
-                System.out.println("文件已存在，无需创建新文件。");
-            }
-        } catch (IOException e) {
-            System.out.println("创建文件时出现错误：" + e.getMessage());
-            e.printStackTrace();
-        }*/
 
     }
 
@@ -122,15 +104,30 @@ public class ArbreBinari implements Serializable {
 
         // 当遍历到树的最后节点时，创建 Equip 替代该节点
         if (profunditat == 1 && node.esq == null && node.dret == null) {
-            node.contingut = new Equip(nomsEquips.remove(0).trim());
+            node.contingut = new Equip(obtenerEquipoAleatorio(nomsEquips));
         }
 
         return node;
     }
 
 
+    private String obtenerEquipoAleatorio(List<String> nomsEquips) {
+        // Verifica si la lista no está vacía
+        if (!nomsEquips.isEmpty()) {
+            // Crea una instancia de la clase Random
+            Random rand = new Random();
 
+            // Genera un índice aleatorio dentro del rango de la lista
+            int indiceAleatorio = rand.nextInt(nomsEquips.size());
 
+            // Obtiene el elemento en el índice aleatorio
+            return nomsEquips.get(indiceAleatorio);
+        } else {
+            // Maneja el caso en que la lista está vacía
+            System.out.println("La lista de equipos está vacía.");
+            return null;
+        }
+    }
 
 
 
@@ -191,11 +188,17 @@ public class ArbreBinari implements Serializable {
 
     // 保存树到文件
     // 保存树到文件
-    public void save(String filename) {
-        try (PrintWriter printWriter = new PrintWriter(new FileWriter(filename))) {
-            saveRecursivament(arrel, printWriter);
+    public void save(String filename) throws Exception {
+
+        BufferedWriter buw = null;
+        try {
+            buw = new BufferedWriter(new FileWriter(filename));//crea el buw sobre l'arxiu
+            arrel.preorderWrite(buw);
+            buw.close();
+
         } catch (IOException e) {
-            System.out.println("保存树到文件时出现错误：" + e.getMessage());
+            System.err.println("saveToTextFile failed: " + e);
+            System.exit(0);
         }
     }
 

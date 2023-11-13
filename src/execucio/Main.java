@@ -7,7 +7,7 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
 
         int opcio;
@@ -20,9 +20,6 @@ public class Main {
             opcio = scanner.nextInt();
 
             if (opcio == 1) {
-                // Crear un nou torneig
-                System.out.print("Introdueix el nom del fitxer: ");
-                String nombresFitxer = scanner.next();
 
                 List<String> nombresEquipos;
                 do {
@@ -31,7 +28,7 @@ public class Main {
                     nombresEquipos = parseNombresEquipos(inputEquipos);
                 } while (nombresEquipos == null);
 
-                 arbreBinari = new ArbreBinari(nombresEquipos, nombresFitxer);
+                 arbreBinari = new ArbreBinari(nombresEquipos);
 
 
                 // Puedes realizar otras acciones según tus necesidades
@@ -72,7 +69,7 @@ public class Main {
             return new ArrayList<>(List.of(equiposArray));
         }
     }
-    private static void runMainProgram(ArbreBinari arbreBinari,int ronda) {
+    private static void runMainProgram(ArbreBinari arbreBinari,int ronda) throws Exception {
         Scanner scanner = new Scanner(System.in);
 
 
@@ -99,6 +96,12 @@ public class Main {
             } else if (opcion == 3) {
                 // Guardar el árbol y salir
                 // 在这里调用保存树到文件的方法
+                System.out.println("Escriu el nom del arxiu");
+
+                System.out.print("Introdueix el nom del fitxer: ");
+                String nomFitxer = scanner.next();
+                arbreBinari.save(nomFitxer);
+
                 System.out.println("Saliendo del programa. ¡Hasta luego!");
             } else {
                 System.out.println("Opción no válida. Por favor, elija 1, 2 o 3.");
