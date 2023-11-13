@@ -51,7 +51,7 @@ public class ArbreBinari implements Serializable {
         arrel=crearArbreRecursivament(nombresEquipos,profunditat);
 
         // 创建新文件
-        /*File nuevoArchivo = new File(nombresFitxer);
+        /*   File nuevoArchivo = new File(nombresFitxer);
 
         try {
             if (nuevoArchivo.createNewFile()) {
@@ -145,7 +145,7 @@ public class ArbreBinari implements Serializable {
     // 递归显示比赛结果
     private void mostrarRecursivament(Node<Equip> node, int i, int ronda) {
         if (node != null) {
-            if (i == ronda) {
+            if (i == ronda+1) {
                 System.out.println("Ronda" + ronda + ": "+node.contingut);
             }
             mostrarRecursivament(node.esq, i + 1, ronda);
