@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class ArbreBinari implements Serializable {
     private class Node<T> {
@@ -156,7 +157,20 @@ public class ArbreBinari implements Serializable {
     // 显示指定节点和轮次的比赛结果
     public void mostrar(Node<Equip> node, int ronda) {
         System.out.println("Ronda " + ronda + ":");
-        mostrarRecursivament(node, 1, ronda);
+        mostrarRecursivament1(node, 1, ronda);
+    }
+
+    private void mostrarRecursivament1(Node<Equip> node, int i, int ronda) {
+        if (node != null) {
+            if (i == ronda+1) {
+                System.out.println("Equip" + node.contingut.getNombre()+ronda + "su puntuacion: ");
+                String scanner = new Scanner(System.in);
+                int puntuacion = scanner.nextInt();
+                node.contingut.setPuntuacion(puntuacion);
+            }
+            mostrarRecursivament(node.esq, i + 1, ronda);
+            mostrarRecursivament(node.dret, i + 1, ronda);
+        }
     }
 
     // 保存树到文件

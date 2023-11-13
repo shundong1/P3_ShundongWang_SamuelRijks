@@ -2,6 +2,8 @@ package estructura;
 
 public class Equip implements Comparable<Equip>{
 
+
+
     private String nombre; // 队伍名称
     private int puntuacion; // 得分
 
@@ -36,5 +38,8 @@ public class Equip implements Comparable<Equip>{
 
     public int getPuntuacion() {
         return puntuacion;
+    }
+    public String getNombre() {
+        return nombre;
     }
 }
