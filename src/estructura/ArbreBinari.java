@@ -1,21 +1,18 @@
 package estructura;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ArbreBinari implements Serializable {
-    private class Node<T> {
-        T contingut;
-        Node<T> esq, dret;
+    private class Node {
+        Equip contingut;
+        Node esq, dret;
 
-        Node(T contingut) {
+        Node(Equip contingut) {
             this(contingut, null, null);
         }
 
-        Node(T contingut, Node<T> esq, Node<T> dret) {
+        Node(Equip contingut, Node esq, Node dret) {
             this.contingut = contingut;
             this.esq = esq;
             this.dret = dret;
@@ -42,7 +39,9 @@ public class ArbreBinari implements Serializable {
         }
     }
 
-    private Node <Equip> arrel;
+    private Node arrel;
+
+    private int profunditat;
 
     // 构造函数，接受一个字符串数组作为参数
     public ArbreBinari(List<String> nombresEquipos,String nombresFitxer) {
@@ -67,42 +66,56 @@ public class ArbreBinari implements Serializable {
 
     }
 
-    public ArbreBinari(String nombresFitxer, int a) {
+    public ArbreBinari(String filename, int profunditat) throws IOException {
         // 读取文件内容并创建树
-        arrel = llegirFitxerICrearArbre(nombresFitxer, a);
+        // Llegeix el contingut del fitxer i crea un arbre
+        BufferedReader bur = new BufferedReader(new FileReader(filename));
+        this.profunditat = profunditat;
+        arrel = preorderLoad(bur, profunditat-1);
 
-        // 如果 arrel 为 null，说明文件读取失败或者文件为空
+        // Si arrel és nul, vol dir que la lectura del fitxer ha fallat o que el fitxer està buit.
         if (arrel == null) {
-            System.out.println("从文件中读取数据并创建树时出现问题。");
+            System.out.println("Problema en llegir dades del fitxer i crear un arbre");
         }
     }
 
-    private Node<Equip> llegirFitxerICrearArbre(String nomFitxer, int a) {
-        try (BufferedReader br = new BufferedReader(new FileReader(nomFitxer))) {
-            // 读取文件的每一行
-            String linia = br.readLine();
+    private Node preorderLoad(BufferedReader bur, int ronda) throws IOException {
 
-            // 你需要根据文件内容的格式来解析数据并构建树
-            // 下面的示例代码仅用于说明，并假设文件中每行包含一个队伍的名称
-            String[] nomsEquips = linia.split(","); // 假设数据使用逗号分隔
-            int profunditat = (int) Math.pow(2, a+1) - 1;
+            String linia = bur.readLine();
+
+            if(linia == null || ronda <= 0){
+                return null;
+            }
+
+            if(linia.equals("_")){
+                Node node = new Node(null);
+                node.esq = preorderLoad(bur, ronda - 1);
+                node.dret = preorderLoad(bur, ronda - 1);
+            }
+            // Divide la línea en nombre del equipo y puntuación
+            String[] parts = linia.split(";");
+            String nomEquip = parts[0];
+            int puntuacio = Integer.parseInt(parts[1]);
+
+            // Crea el nodo con el equipo y su puntuación
+            Equip equip = new Equip(nomEquip, puntuacio);
+            Node node = new Node(equip);
 
 
-            // 创建树
-            arrel=crearArbreRecursivament(new ArrayList<>(Arrays.asList(nomsEquips)), profunditat);
-            return arrel;
-        } catch (IOException e) {
-            System.out.println("读取文件时出现错误：" + e.getMessage());
-            return null;
-        }
+            // Construye el árbol de forma recursiva
+            node.esq = preorderLoad(bur, ronda - 1);
+            node.dret = preorderLoad(bur, ronda - 1);
+
+            return node;
+
     }
 
-    private Node<Equip> crearArbreRecursivament(List<String> nomsEquips, int profunditat) {
+   private Node crearArbreRecursivament(List<String> nomsEquips, int profunditat) {
         if (profunditat <= 0 || nomsEquips.isEmpty()) {
             return null;
         }
 
-        Node<Equip> node = new Node<>(null);
+        Node node = new Node(null);
         // 递归构建左右子树
         node.esq = crearArbreRecursivament(nomsEquips, profunditat - 1);
         node.dret = crearArbreRecursivament(nomsEquips, profunditat - 1);
@@ -122,12 +135,12 @@ public class ArbreBinari implements Serializable {
 
 
     // 插入节点的方法
-    public boolean inserir(Node<Equip> parentNode, Equip equip, int direccio) {
+    public boolean inserir(Node parentNode, Equip equip, int direccio) {
         if (parentNode == null || parentNode.contingut == null || direccio < 0 || direccio > 1) {
             return false;
         }
 
-        Node<Equip> fill = new Node<>(equip);
+        Node fill = new Node(equip);
         if (direccio == 0) {
             parentNode.esq = fill;
         } else {
@@ -144,7 +157,7 @@ public class ArbreBinari implements Serializable {
     }
 
     // 递归显示比赛结果
-    private void mostrarRecursivament(Node<Equip> node, int i, int ronda) {
+    private void mostrarRecursivament(Node node, int i, int ronda) {
         if (node != null) {
             if (i == ronda+1) {
                 System.out.println("Ronda" + ronda + ": "+node.contingut);
@@ -155,21 +168,24 @@ public class ArbreBinari implements Serializable {
     }
 
     // 显示指定节点和轮次的比赛结果
-    public void mostrar(Node<Equip> node, int ronda) {
+    public void mostrar(Node node, int ronda) {
         System.out.println("Ronda " + ronda + ":");
         mostrarRecursivament1(node, 1, ronda);
     }
 
-    private void mostrarRecursivament1(Node<Equip> node, int i, int ronda) {
+    private void mostrarRecursivament1(Node node, int i, int ronda) {
         if (node != null) {
-            if (i == ronda+1) {
-                System.out.println("Equip" + node.contingut.getNombre()+ronda + "su puntuacion: ");
-                String scanner = new Scanner(System.in);
-                int puntuacion = scanner.nextInt();
-                node.contingut.setPuntuacion(puntuacion);
+            if (i == ronda + 1) {
+                System.out.println("Equipo " + node.contingut.getNombre() + " - Ronda " + ronda + " - Puntuación: ");
+                try (Scanner scanner = new Scanner(System.in)) {
+                    int puntuacion = scanner.nextInt();
+                    node.contingut.setPuntuacion(puntuacion);
+                } catch (InputMismatchException e) {
+                    System.out.println("Error: Ingresa un valor numérico válido.");
+                }
             }
-            mostrarRecursivament(node.esq, i + 1, ronda);
-            mostrarRecursivament(node.dret, i + 1, ronda);
+            mostrarRecursivament1(node.esq, i + 1, ronda);
+            mostrarRecursivament1(node.dret, i + 1, ronda);
         }
     }
 
@@ -185,7 +201,7 @@ public class ArbreBinari implements Serializable {
 
 
     // 递归保存树到文件
-    private void saveRecursivament(Node<Equip> node, PrintWriter printWriter) {
+    private void saveRecursivament(Node node, PrintWriter printWriter) {
         if (node != null) {
             String contingutStr = (node.contingut != null) ? node.contingut.toSave() : "NULL_CONTENT";
             printWriter.println(contingutStr);
@@ -200,7 +216,7 @@ public class ArbreBinari implements Serializable {
     }
 
     // 递归计算树的深度
-    private int calculateProfunditatRecursivament(Node<Equip> node) {
+    private int calculateProfunditatRecursivament(Node node) {
         if (node == null|| node.contingut != null) {
             return 0;
         } else {
@@ -219,7 +235,7 @@ public class ArbreBinari implements Serializable {
         mostrarArbreRecursivament(arrel, 0);
     }
 
-    private void mostrarArbreRecursivament(Node<Equip> node, int nivel) {
+    private void mostrarArbreRecursivament(Node node, int nivel) {
         if (node != null) {
             mostrarArbreRecursivament(node.dret, nivel + 1);
 

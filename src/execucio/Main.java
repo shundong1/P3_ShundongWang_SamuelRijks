@@ -2,11 +2,12 @@ package execucio;
 
 import estructura.ArbreBinari;
 
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
 
         int opcio;
@@ -105,8 +106,3 @@ public class Main {
         } while (opcion != 3);
     }
 }
-
-
-
-
-
