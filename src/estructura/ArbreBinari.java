@@ -43,8 +43,9 @@ public class ArbreBinari implements Serializable {
     public ArbreBinari(List<String> nombresEquipos) {
         //这个是创建一个新的锦标赛，新的文件，根据输入团队的数量创建比赛
 
-        this.profunditat = (int) ((Math.log(nombresEquipos.size()) / Math.log(2)) + 1);;
-        arrel=crearArbreRecursivament(nombresEquipos,profunditat);
+        this.profunditat = (int) ((Math.log(nombresEquipos.size()) / Math.log(2)) + 1);
+        int a = profunditat;
+        arrel=crearArbreRecursivament(nombresEquipos,a);
 
     }
 
@@ -62,37 +63,41 @@ public class ArbreBinari implements Serializable {
     }
 
     private Node preorderLoad(BufferedReader bur, int ronda) throws IOException {
+        String linia = bur.readLine();
 
-            String linia = bur.readLine();
+        if (linia == null || ronda <= 0) {
+            return null;
+        }
 
-            if(linia == null || ronda <= 0){
-                return null;
-            }
-
-            if(linia.equals("_")){
-                Node node = new Node(null);
-                node.esq = preorderLoad(bur, ronda - 1);
-                node.dret = preorderLoad(bur, ronda - 1);
-            }
-            // Divide la línea en nombre del equipo y puntuación
-            String[] parts = linia.split(";");
-            String nomEquip = parts[0];
-            int puntuacio = Integer.parseInt(parts[1]);
-
-            // Crea el nodo con el equipo y su puntuación
-            Equip equip = new Equip(nomEquip, puntuacio);
-            Node node = new Node(equip);
-
-
-            // Construye el árbol de forma recursiva
+        if (linia.equals("_")) {
+            Node node = new Node(null);
             node.esq = preorderLoad(bur, ronda - 1);
             node.dret = preorderLoad(bur, ronda - 1);
-
             return node;
+        }
 
+        // Divide la línea en nombre del equipo y puntuación
+        String[] parts = linia.split(":");
+        if (parts.length != 2) {
+            throw new IOException("Formato de línea no válido: " + linia);
+        }
+
+        String nomEquip = parts[0].trim();
+        int puntuacio = Integer.parseInt(parts[1].trim());
+
+        // Crea el nodo con el equipo y su puntuación
+        Equip equip = new Equip(nomEquip, puntuacio);
+        Node node = new Node(equip);
+
+        // Construye el árbol de forma recursiva
+        node.esq = preorderLoad(bur, ronda - 1);
+        node.dret = preorderLoad(bur, ronda - 1);
+
+        return node;
     }
 
-   private Node crearArbreRecursivament(List<String> nomsEquips, int profunditat) {
+
+    private Node crearArbreRecursivament(List<String> nomsEquips, int profunditat) {
         if (profunditat <= 0 || nomsEquips.isEmpty()) {
             return null;
         }
@@ -121,13 +126,16 @@ public class ArbreBinari implements Serializable {
             int indiceAleatorio = rand.nextInt(nomsEquips.size());
 
             // Obtiene el elemento en el índice aleatorio
-            return nomsEquips.get(indiceAleatorio);
+            String equipoSeleccionado = nomsEquips.remove(indiceAleatorio);
+
+            return equipoSeleccionado;
         } else {
             // Maneja el caso en que la lista está vacía
             System.out.println("La lista de equipos está vacía.");
             return null;
         }
     }
+
 
 
 
@@ -187,7 +195,6 @@ public class ArbreBinari implements Serializable {
     }
 
     // 保存树到文件
-    // 保存树到文件
     public void save(String filename) throws Exception {
 
         BufferedWriter buw = null;
@@ -204,14 +211,6 @@ public class ArbreBinari implements Serializable {
 
 
     // 递归保存树到文件
-    private void saveRecursivament(Node node, PrintWriter printWriter) {
-        if (node != null) {
-            String contingutStr = (node.contingut != null) ? node.contingut.toSave() : "NULL_CONTENT";
-            printWriter.println(contingutStr);
-            saveRecursivament(node.esq, printWriter);
-            saveRecursivament(node.dret, printWriter);
-        }
-    }
 
     // 获取当前轮次
     public int rondaActual() {
@@ -231,7 +230,37 @@ public class ArbreBinari implements Serializable {
 
     // 请求比赛结果的方法
     public void demanarResultats() {
-        // 实现你的逻辑
+        if(arrel != null){
+            arrel.contingut.toSave();
+        }
+    }
+
+    public void mostrar2(int ronda) {
+        System.out.println("Ronda " + ronda + ":");
+        mostrarRecursivament2(arrel, 1, ronda);
+    }
+
+    // 递归显示比赛结果
+    private void mostrarRecursivament2(Node node, int i, int ronda) {
+        Scanner scanner = new Scanner(System.in);
+        if (node != null) {
+            if (i == ronda + 1) {
+                System.out.println("Equipo " + node.contingut.getNombre() + " - Ronda " + ronda + " - Puntuación: ");
+                while (true) {
+                    try {
+                        int puntuacion = scanner.nextInt();
+                        node.contingut.setPuntuacion(puntuacion);
+                        break; // 退出循环，因为输入是有效的整数
+                    } catch (InputMismatchException e) {
+                        System.out.println("Error: Ingresa un valor numérico válido.");
+                        // 清除无效输入
+                        scanner.next();
+                    }
+                }
+            }
+            mostrarRecursivament2(node.esq, i + 1, ronda);
+            mostrarRecursivament2(node.dret, i + 1, ronda);
+        }
     }
     //可以删除
     public void mostrarArbre() {
@@ -251,4 +280,29 @@ public class ArbreBinari implements Serializable {
             mostrarArbreRecursivament(node.esq, nivel + 1);
         }
     }
+    public Node ParaGanadorAvanza(){
+        Node result = GanadorAvanza(arrel);
+        if (result != null) {
+            arrel = result;
+        }
+        return result;
+    }
+
+    private Node GanadorAvanza(Node node){
+        if(node!=null){
+            if(node.contingut==null && node.dret.contingut!=null && node.esq.contingut!=null){
+                if(node.esq.contingut.compareTo(node.dret.contingut)>0){
+                    return new Node(node.esq.contingut, node.esq, node.dret);
+                } else {
+                    return new Node(node.dret.contingut, node.esq, node.dret);
+                }
+            }
+            Node esq = GanadorAvanza(node.esq);
+            Node dret = GanadorAvanza(node.dret);
+            return new Node(node.contingut, esq, dret);
+        }
+
+        return null;
+    }
+
 }

@@ -28,7 +28,7 @@ public class Main {
                     nombresEquipos = parseNombresEquipos(inputEquipos);
                 } while (nombresEquipos == null);
 
-                 arbreBinari = new ArbreBinari(nombresEquipos);
+                arbreBinari = new ArbreBinari(nombresEquipos);
 
 
                 // Puedes realizar otras acciones según tus necesidades
@@ -40,7 +40,9 @@ public class Main {
                 System.out.print("Introdueix la profunditat: ");
                 int profunditat = scanner.nextInt();
 
-                 arbreBinari = new ArbreBinari(nombresFitxer, profunditat);
+                arbreBinari = new ArbreBinari(nombresFitxer, profunditat);
+
+                arbreBinari.mostrarArbre();
 
                 // Puedes realizar otras acciones según tus necesidades
             } else {
@@ -76,6 +78,7 @@ public class Main {
         int opcion;
 
         do {
+
             System.out.println("Opciones:");
             System.out.println("1 muestra una ronda");
             System.out.println("2 introducir resultados en la ronda actual");
@@ -90,9 +93,14 @@ public class Main {
                 arbreBinari.mostrar(ronda);
 
             } else if (opcion == 2) {
-                // Introducir resultados en la ronda actual
+                if(ronda!=0){// Introducir resultados en la ronda actual
                 // 在这里调用相应的方法
                 //在这里我要先展示每一回合的每一个equib,然后询问客户然后读取客户的输入然后setPuntuacion，然后分数高的晋级
+                arbreBinari.mostrar2(ronda);
+                arbreBinari.ParaGanadorAvanza();
+                }else{
+                    System.out.println("El juego ha terminado y puedes guardarlo seleccionando el número tres");
+                }
             } else if (opcion == 3) {
                 // Guardar el árbol y salir
                 // 在这里调用保存树到文件的方法
@@ -106,6 +114,9 @@ public class Main {
             } else {
                 System.out.println("Opción no válida. Por favor, elija 1, 2 o 3.");
             }
+            ronda=arbreBinari.rondaActual();
+            //可删
+            arbreBinari.mostrarArbre();
         } while (opcion != 3);
     }
 }

@@ -29,7 +29,7 @@ public class Equip implements Comparable<Equip>{
     }
 
     public String toSave() {
-        return nombre + ";" + puntuacion; // 以 "名称;得分" 格式返回字符串，用于保存到文件
+        return nombre + ": " + puntuacion; // 以 "名称;得分" 格式返回字符串，用于保存到文件
     }
 
     public boolean haJugado() {
