@@ -9,6 +9,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
+        String nomFitxer = null;
 
         int opcio;
         ArbreBinari arbreBinari=null;
@@ -36,13 +37,16 @@ public class Main {
                 // Carregar un torneig
                 System.out.print("Introdueix el nom del fitxer: ");
                 String nombresFitxer = scanner.next();
+                nomFitxer =nombresFitxer;
 
                 System.out.print("Introdueix la profunditat: ");
                 int profunditat = scanner.nextInt();
 
                 arbreBinari = new ArbreBinari(nombresFitxer, profunditat);
-
+                System.out.println("Mostrar información anterior");
                 arbreBinari.mostrarArbre();
+                System.out.println("El siguiente paso será borrar los datos anteriores e iniciar una nueva entrada de información");
+                arbreBinari.ClaridadDeLosResultadosAnteriores();
 
                 // Puedes realizar otras acciones según tus necesidades
             } else {
@@ -56,22 +60,37 @@ public class Main {
         int rondaActual = arbreBinari.rondaActual();
         System.out.println("Ronda actual: " + rondaActual);
 
-        runMainProgram(arbreBinari,rondaActual);
+        runMainProgram(arbreBinari,rondaActual,nomFitxer);
 
 
         scanner.close();
     }
 
     private static List<String> parseNombresEquipos(String input) {
-        String[] equiposArray = input.split(";");
-        if (equiposArray.length < 2) {
-            System.out.println("Has d'introduir almenys dos equips.");
-            return null;
-        } else {
-            return new ArrayList<>(List.of(equiposArray));
+        List<String> nombresEquipos;
+
+        while (true) {
+            String[] equiposArray = input.split(";");
+            int numEquipos = equiposArray.length;
+
+            // 检查是否是大于2的2的次方
+            if (numEquipos > 2 && (numEquipos & (numEquipos - 1)) == 0) {
+                nombresEquipos = new ArrayList<>(List.of(equiposArray));
+                break;  // 输入符合要求，退出循环
+            } else {
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("Has d'introduir una quantitat major a 2 i que sigui una potència de 2.");
+                // 重新询问用户输入
+                System.out.print("Introdueix els noms dels equips separats per ; : ");
+                input = scanner.next();
+            }
         }
+
+        return nombresEquipos;
     }
-    private static void runMainProgram(ArbreBinari arbreBinari,int ronda) throws Exception {
+
+
+    private static void runMainProgram(ArbreBinari arbreBinari,int ronda,String nomFitxer) throws Exception {
         Scanner scanner = new Scanner(System.in);
 
 
@@ -104,10 +123,12 @@ public class Main {
             } else if (opcion == 3) {
                 // Guardar el árbol y salir
                 // 在这里调用保存树到文件的方法
+                if(nomFitxer==null){
                 System.out.println("Escriu el nom del arxiu");
 
                 System.out.print("Introdueix el nom del fitxer: ");
-                String nomFitxer = scanner.next();
+                nomFitxer = scanner.next();
+                }
                 arbreBinari.save(nomFitxer);
 
                 System.out.println("Saliendo del programa. ¡Hasta luego!");
@@ -115,8 +136,7 @@ public class Main {
                 System.out.println("Opción no válida. Por favor, elija 1, 2 o 3.");
             }
             ronda=arbreBinari.rondaActual();
-            //可删
-            arbreBinari.mostrarArbre();
+
         } while (opcion != 3);
     }
 }

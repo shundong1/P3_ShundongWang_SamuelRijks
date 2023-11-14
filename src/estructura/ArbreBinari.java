@@ -4,6 +4,31 @@ import java.io.*;
 import java.util.*;
 
 public class ArbreBinari implements Serializable {
+    public void ClaridadDeLosResultadosAnteriores() {
+        arrel=actualizarArbol(arrel,profunditat,1);
+    }
+
+    private Node actualizarArbol(Node node,int profunditat,int ronda) {
+        System.out.println("ronda: "+ronda);
+        if (node == null ) {
+        return node;
+        }else{
+            if(ronda!=profunditat){
+
+                node.esq = actualizarArbol(node.esq, profunditat, ronda + 1);
+                node.dret = actualizarArbol(node.dret, profunditat, ronda + 1);
+                node.contingut=null;
+
+            }
+            if(ronda==profunditat){
+                node.contingut.setPuntuacion(-1);
+                System.out.println("已进入代码");
+                return node;
+            }
+        }
+        return node;
+    }
+
     private class Node {
         Equip contingut;
         Node esq, dret;
@@ -65,36 +90,35 @@ public class ArbreBinari implements Serializable {
     private Node preorderLoad(BufferedReader bur, int ronda) throws IOException {
         String linia = bur.readLine();
 
-        if (linia == null || ronda <= 0) {
+        if (linia == null || ronda < 0) {
             return null;
         }
 
-        if (linia.equals("_")) {
-            Node node = new Node(null);
+        Node node;
+            // 如果当前行不是 "_", 解析队伍名和分数，并创建节点
+            String[] parts = linia.split(":");
+
+            if (parts.length != 2) {
+                throw new IOException("Formato de línea no válido: " + linia);
+            }
+
+            String nomEquip = parts[0].trim();
+            int puntuacio = Integer.parseInt(parts[1].trim());
+
+            Equip equip = new Equip(nomEquip, puntuacio);
+            node = new Node(equip);
+
+
+            // 构建左右子树
+        if (ronda > 0) {
             node.esq = preorderLoad(bur, ronda - 1);
             node.dret = preorderLoad(bur, ronda - 1);
-            return node;
         }
 
-        // Divide la línea en nombre del equipo y puntuación
-        String[] parts = linia.split(":");
-        if (parts.length != 2) {
-            throw new IOException("Formato de línea no válido: " + linia);
-        }
-
-        String nomEquip = parts[0].trim();
-        int puntuacio = Integer.parseInt(parts[1].trim());
-
-        // Crea el nodo con el equipo y su puntuación
-        Equip equip = new Equip(nomEquip, puntuacio);
-        Node node = new Node(equip);
-
-        // Construye el árbol de forma recursiva
-        node.esq = preorderLoad(bur, ronda - 1);
-        node.dret = preorderLoad(bur, ronda - 1);
 
         return node;
     }
+
 
 
     private Node crearArbreRecursivament(List<String> nomsEquips, int profunditat) {
