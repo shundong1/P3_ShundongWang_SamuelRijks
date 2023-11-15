@@ -129,10 +129,9 @@ public class Main {
                 // 在这里调用相应的方法
                 //在这里我要先展示每一回合的每一个equib,然后询问客户然后读取客户的输入然后setPuntuacion，然后分数高的晋级
                 arbreBinari.mostrar2(ronda);
-                    arbreBinari.mostrarArbre();
-                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAA");
+
                 arbreBinari.ParaGanadorAvanza();
-                arbreBinari.mostrarArbre();
+
                 }else{
                     System.out.println("El juego ha terminado y puedes guardarlo seleccionando el número tres");
                 }
