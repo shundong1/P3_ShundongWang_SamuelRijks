@@ -4,32 +4,13 @@ import java.io.*;
 import java.util.*;
 
 public class ArbreBinari implements Serializable {
-    public void ClaridadDeLosResultadosAnteriores() {
-        arrel=actualizarArbol(arrel,profunditat,1);
-    }
 
-    private Node actualizarArbol(Node node,int profunditat,int ronda) {
-        System.out.println("ronda: "+ronda);
-        if (node == null ) {
-        return node;
-        }else{
-            if(ronda!=profunditat){
-
-                node.esq = actualizarArbol(node.esq, profunditat, ronda + 1);
-                node.dret = actualizarArbol(node.dret, profunditat, ronda + 1);
-                node.contingut=null;
-
-            }
-            if(ronda==profunditat){
-                node.contingut.setPuntuacion(-1);
-                System.out.println("已进入代码");
-                return node;
-            }
-        }
-        return node;
-    }
 
     private class Node {
+        public Equip getContingut() {
+            return contingut;
+        }
+
         Equip contingut;
         Node esq, dret;
 
@@ -45,22 +26,32 @@ public class ArbreBinari implements Serializable {
 
         // 添加 preorder 方法
         private void preorderWrite(BufferedWriter buw) throws Exception {
+            // 写入当前节点的内容，如果为空则写入一个空行
             if (contingut != null) {
                 buw.write(contingut.toSave());
-                if(esq != null ){
+            } else {
+                buw.write("_"); // 使用 "_" 表示空内容
+            }
+
+                if (esq != null) {
                     buw.newLine();
                     esq.preorderWrite(buw);
                 }
-                if(dret != null){
+
+                if (dret != null) {
                     buw.newLine();
                     dret.preorderWrite(buw);
                 }
 
-            }
         }
+
     }
 
     private Node arrel;
+
+    public int getProfunditat() {
+        return profunditat;
+    }
 
     private int profunditat;
 
@@ -86,15 +77,16 @@ public class ArbreBinari implements Serializable {
             System.out.println("Problema en llegir dades del fitxer i crear un arbre");
         }
     }
-
     private Node preorderLoad(BufferedReader bur, int ronda) throws IOException {
         String linia = bur.readLine();
+        Node node = new Node(null);
 
-        if (linia == null || ronda < 0) {
+        if (linia.equals("_") && ronda >= 0) {
+            node=new Node (null);
+        } else if (ronda < 0) {
             return null;
-        }
+        } else if (!Objects.equals(linia, "_") && ronda >= 0) {
 
-        Node node;
             // 如果当前行不是 "_", 解析队伍名和分数，并创建节点
             String[] parts = linia.split(":");
 
@@ -107,19 +99,16 @@ public class ArbreBinari implements Serializable {
 
             Equip equip = new Equip(nomEquip, puntuacio);
             node = new Node(equip);
+        }
 
-
-            // 构建左右子树
+        // 构建左右子树
         if (ronda > 0) {
             node.esq = preorderLoad(bur, ronda - 1);
             node.dret = preorderLoad(bur, ronda - 1);
         }
 
-
         return node;
     }
-
-
 
     private Node crearArbreRecursivament(List<String> nomsEquips, int profunditat) {
         if (profunditat <= 0 || nomsEquips.isEmpty()) {
@@ -181,12 +170,11 @@ public class ArbreBinari implements Serializable {
 
     // 显示指定轮次的比赛结果
     public void mostrar(int ronda) {
-        System.out.println("Ronda " + ronda + ":");
         mostrarRecursivament(arrel, 1, ronda);
     }
 
     // 递归显示比赛结果
-    private void mostrarRecursivament(Node node, int i, int ronda) {
+    /*private void mostrarRecursivament(Node node, int i, int ronda) {
         if (node != null) {
             if (i == ronda+1) {
                 System.out.println("Ronda" + ronda + ": "+node.contingut);
@@ -194,7 +182,19 @@ public class ArbreBinari implements Serializable {
             mostrarRecursivament(node.esq, i + 1, ronda);
             mostrarRecursivament(node.dret, i + 1, ronda);
         }
+    }*/
+    private void mostrarRecursivament(Node node, int i, int ronda) {
+        if (node != null) {
+            if (i == ronda+1) {
+
+                System.out.println("Ronda " + (profunditat+1 - i) + ": " + node.contingut);
+            }
+            mostrarRecursivament(node.dret, i + 1, ronda);
+            mostrarRecursivament(node.esq, i + 1, ronda);
+
+        }
     }
+
 
     // 显示指定节点和轮次的比赛结果
     public void mostrar(Node node, int ronda) {
@@ -260,7 +260,7 @@ public class ArbreBinari implements Serializable {
     }
 
     public void mostrar2(int ronda) {
-        System.out.println("Ronda " + ronda + ":");
+        System.out.println("Ronda " + (profunditat - ronda) + ":");
         mostrarRecursivament2(arrel, 1, ronda);
     }
 
@@ -269,7 +269,7 @@ public class ArbreBinari implements Serializable {
         Scanner scanner = new Scanner(System.in);
         if (node != null) {
             if (i == ronda + 1) {
-                System.out.println("Equipo " + node.contingut.getNombre() + " - Ronda " + ronda + " - Puntuación: ");
+                System.out.println("Equipo " + node.contingut.getNombre() + " - Ronda " + (profunditat - ronda) + " - Puntuación: ");
                 while (true) {
                     try {
                         int puntuacion = scanner.nextInt();
@@ -279,6 +279,7 @@ public class ArbreBinari implements Serializable {
                         System.out.println("Error: Ingresa un valor numérico válido.");
                         // 清除无效输入
                         scanner.next();
+                        System.out.println("Equipo " + node.contingut.getNombre() + " - Ronda " + (profunditat - ronda) + " - Puntuación: ");
                     }
                 }
             }
@@ -313,11 +314,14 @@ public class ArbreBinari implements Serializable {
     }
 
     private Node GanadorAvanza(Node node){
+
         if(node!=null){
             if(node.contingut==null && node.dret.contingut!=null && node.esq.contingut!=null){
                 if(node.esq.contingut.compareTo(node.dret.contingut)>0){
+                    node.esq.contingut.setPuntuacion(-1);
                     return new Node(node.esq.contingut, node.esq, node.dret);
                 } else {
+                    node.dret.contingut.setPuntuacion(-1);
                     return new Node(node.dret.contingut, node.esq, node.dret);
                 }
             }

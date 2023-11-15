@@ -2,6 +2,8 @@ package execucio;
 
 import estructura.ArbreBinari;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -37,16 +39,25 @@ public class Main {
                 // Carregar un torneig
                 System.out.print("Introdueix el nom del fitxer: ");
                 String nombresFitxer = scanner.next();
-                nomFitxer =nombresFitxer;
+                nomFitxer = nombresFitxer;
+                boolean a = true;
+                int profunditat = 0;
+                while (a) {
+                    BufferedReader bur = new BufferedReader(new FileReader(nombresFitxer));
+                    int verdad = calculateDepth(countNonEmptyLines(bur));
+                    System.out.print("Introdueix la profunditat(el valor correcto es " + verdad+") :" );
+                    profunditat = scanner.nextInt();
 
-                System.out.print("Introdueix la profunditat: ");
-                int profunditat = scanner.nextInt();
+                    if (profunditat == verdad) {
+                        a = false;
+                    }else{
+                        System.out.println("El número introducido debe ser valor correcto");
+                    }
+
+                }
 
                 arbreBinari = new ArbreBinari(nombresFitxer, profunditat);
-                System.out.println("Mostrar información anterior");
-                arbreBinari.mostrarArbre();
-                System.out.println("El siguiente paso será borrar los datos anteriores e iniciar una nueva entrada de información");
-                arbreBinari.ClaridadDeLosResultadosAnteriores();
+
 
                 // Puedes realizar otras acciones según tus necesidades
             } else {
@@ -58,7 +69,9 @@ public class Main {
         arbreBinari.mostrarArbre();
         //显示现在是第几轮
         int rondaActual = arbreBinari.rondaActual();
-        System.out.println("Ronda actual: " + rondaActual);
+
+        int a=arbreBinari.getProfunditat()-rondaActual;
+        System.out.println("Ronda actual: " + a);
 
         runMainProgram(arbreBinari,rondaActual,nomFitxer);
 
@@ -116,7 +129,10 @@ public class Main {
                 // 在这里调用相应的方法
                 //在这里我要先展示每一回合的每一个equib,然后询问客户然后读取客户的输入然后setPuntuacion，然后分数高的晋级
                 arbreBinari.mostrar2(ronda);
+                    arbreBinari.mostrarArbre();
+                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAA");
                 arbreBinari.ParaGanadorAvanza();
+                arbreBinari.mostrarArbre();
                 }else{
                     System.out.println("El juego ha terminado y puedes guardarlo seleccionando el número tres");
                 }
@@ -138,5 +154,22 @@ public class Main {
             ronda=arbreBinari.rondaActual();
 
         } while (opcion != 3);
+    }
+    private static int countNonEmptyLines(BufferedReader reader) throws IOException {
+        int count = 0;
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            // 如果该行不为空，则增加计数
+            if (!line.trim().isEmpty()) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+    public static int calculateDepth(int totalNodes) {
+        // 使用 log2 函数计算深度
+        return (int) Math.ceil(Math.log(totalNodes + 1) / Math.log(2));
     }
 }
