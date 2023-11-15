@@ -87,7 +87,7 @@ public class Main {
             int numEquipos = equiposArray.length;
 
             // 检查是否是大于2的2的次方
-            if (numEquipos > 2 && (numEquipos & (numEquipos - 1)) == 0) {
+            if (numEquipos >=2 && (numEquipos & (numEquipos - 1)) == 0) {
                 nombresEquipos = new ArrayList<>(List.of(equiposArray));
                 break;  // 输入符合要求，退出循环
             } else {
@@ -133,7 +133,8 @@ public class Main {
                 arbreBinari.ParaGanadorAvanza();
 
                 }else{
-                    System.out.println("El juego ha terminado y puedes guardarlo seleccionando el número tres");
+                    System.out.println("El juego ha terminado ");
+                    break;
                 }
             } else if (opcion == 3) {
                 // Guardar el árbol y salir
@@ -149,6 +150,7 @@ public class Main {
                 System.out.println("Saliendo del programa. ¡Hasta luego!");
             } else {
                 System.out.println("Opción no válida. Por favor, elija 1, 2 o 3.");
+
             }
             ronda=arbreBinari.rondaActual();
 
