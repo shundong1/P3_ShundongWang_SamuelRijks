@@ -24,24 +24,24 @@ public class ArbreBinari implements Serializable {
             this.dret = dret;
         }
 
-        // 添加 preorder 方法
+        // Añadir el método preorder
         private void preorderWrite(BufferedWriter buw) throws Exception {
-            // 写入当前节点的内容，如果为空则写入一个空行
+            // Escribe el contenido del nodo actual, o una línea en blanco si está vacío
             if (contingut != null) {
                 buw.write(contingut.toSave());
             } else {
-                buw.write("_"); // 使用 "_" 表示空内容
+                buw.write("_"); // Utilice "_" para el contenido vacío
             }
 
-                if (esq != null) {
-                    buw.newLine();
-                    esq.preorderWrite(buw);
-                }
+            if (esq != null) {
+                buw.newLine();
+                esq.preorderWrite(buw);
+            }
 
-                if (dret != null) {
-                    buw.newLine();
-                    dret.preorderWrite(buw);
-                }
+            if (dret != null) {
+                buw.newLine();
+                dret.preorderWrite(buw);
+            }
 
         }
 
@@ -55,9 +55,9 @@ public class ArbreBinari implements Serializable {
 
     private int profunditat;
 
-    // 构造函数，接受一个字符串数组作为参数
+    // Constructor que toma un array de cadenas como argumentos
     public ArbreBinari(List<String> nombresEquipos) {
-        //这个是创建一个新的锦标赛，新的文件，根据输入团队的数量创建比赛
+        // Este crea un nuevo torneo, un nuevo archivo, y crea el torneo basado en el número de equipos de entrada
 
         this.profunditat = (int) ((Math.log(nombresEquipos.size()) / Math.log(2)) + 1);
         int a = profunditat;
@@ -66,7 +66,6 @@ public class ArbreBinari implements Serializable {
     }
 
     public ArbreBinari(String filename, int profunditat) throws IOException {
-        // 读取文件内容并创建树
         // Llegeix el contingut del fitxer i crea un arbre
         BufferedReader bur = new BufferedReader(new FileReader(filename));
         this.profunditat = profunditat;
@@ -87,7 +86,7 @@ public class ArbreBinari implements Serializable {
             return null;
         } else if (!Objects.equals(linia, "_") && ronda >= 0) {
 
-            // 如果当前行不是 "_", 解析队伍名和分数，并创建节点
+            // Si la línea actual no es "_", analiza el nombre del equipo y la puntuación y crea el nodo
             String[] parts = linia.split(":");
 
             if (parts.length != 2) {
@@ -101,7 +100,7 @@ public class ArbreBinari implements Serializable {
             node = new Node(equip);
         }
 
-        // 构建左右子树
+        // Construir subárboles izquierdo y derecho
         if (ronda > 0) {
             node.esq = preorderLoad(bur, ronda - 1);
             node.dret = preorderLoad(bur, ronda - 1);
@@ -116,11 +115,11 @@ public class ArbreBinari implements Serializable {
         }
 
         Node node = new Node(null);
-        // 递归构建左右子树
+        // Construir recursivamente los subárboles izquierdo y derecho
         node.esq = crearArbreRecursivament(nomsEquips, profunditat - 1);
         node.dret = crearArbreRecursivament(nomsEquips, profunditat - 1);
 
-        // 当遍历到树的最后节点时，创建 Equip 替代该节点
+        // Al recorrer el último nodo del árbol, crea un Equip para reemplazarlo.
         if (profunditat == 1 && node.esq == null && node.dret == null) {
             node.contingut = new Equip(obtenerEquipoAleatorio(nomsEquips));
         }
@@ -150,39 +149,12 @@ public class ArbreBinari implements Serializable {
     }
 
 
-
-
-    // 插入节点的方法
-    public boolean inserir(Node parentNode, Equip equip, int direccio) {
-        if (parentNode == null || parentNode.contingut == null || direccio < 0 || direccio > 1) {
-            return false;
-        }
-
-        Node fill = new Node(equip);
-        if (direccio == 0) {
-            parentNode.esq = fill;
-        } else {
-            parentNode.dret = fill;
-        }
-
-        return true;
-    }
-
-    // 显示指定轮次的比赛结果
+    // Mostrar los resultados de la ronda especificada
     public void mostrar(int ronda) {
         mostrarRecursivament(arrel, 1, ronda);
     }
 
-    // 递归显示比赛结果
-    /*private void mostrarRecursivament(Node node, int i, int ronda) {
-        if (node != null) {
-            if (i == ronda+1) {
-                System.out.println("Ronda" + ronda + ": "+node.contingut);
-            }
-            mostrarRecursivament(node.esq, i + 1, ronda);
-            mostrarRecursivament(node.dret, i + 1, ronda);
-        }
-    }*/
+
     private void mostrarRecursivament(Node node, int i, int ronda) {
         if (node != null) {
             if (i == ronda+1) {
@@ -195,30 +167,7 @@ public class ArbreBinari implements Serializable {
         }
     }
 
-
-    // 显示指定节点和轮次的比赛结果
-    public void mostrar(Node node, int ronda) {
-        System.out.println("Ronda " + ronda + ":");
-        mostrarRecursivament1(node, 1, ronda);
-    }
-
-    private void mostrarRecursivament1(Node node, int i, int ronda) {
-        if (node != null) {
-            if (i == ronda + 1) {
-                System.out.println("Equipo " + node.contingut.getNombre() + " - Ronda " + ronda + " - Puntuación: ");
-                try (Scanner scanner = new Scanner(System.in)) {
-                    int puntuacion = scanner.nextInt();
-                    node.contingut.setPuntuacion(puntuacion);
-                } catch (InputMismatchException e) {
-                    System.out.println("Error: Ingresa un valor numérico válido.");
-                }
-            }
-            mostrarRecursivament1(node.esq, i + 1, ronda);
-            mostrarRecursivament1(node.dret, i + 1, ronda);
-        }
-    }
-
-    // 保存树到文件
+    // Guardar el árbol en un archivo
     public void save(String filename) throws Exception {
 
         BufferedWriter buw = null;
@@ -234,14 +183,14 @@ public class ArbreBinari implements Serializable {
     }
 
 
-    // 递归保存树到文件
 
-    // 获取当前轮次
+
+    // Obtener la ronda actual
     public int rondaActual() {
         return calculateProfunditatRecursivament(arrel);
     }
 
-    // 递归计算树的深度
+    // Calcular recursivamente la profundidad del árbol
     private int calculateProfunditatRecursivament(Node node) {
         if (node == null|| node.contingut != null) {
             return 0;
@@ -252,7 +201,7 @@ public class ArbreBinari implements Serializable {
         }
     }
 
-    // 请求比赛结果的方法
+    // Método de solicitud de resultados
     public void demanarResultats() {
         if(arrel != null){
             arrel.contingut.toSave();
@@ -264,7 +213,7 @@ public class ArbreBinari implements Serializable {
         mostrarRecursivament2(arrel, 1, ronda);
     }
 
-    // 递归显示比赛结果
+    // Visualización recursiva de los resultados de la carrera
     private void mostrarRecursivament2(Node node, int i, int ronda) {
         Scanner scanner = new Scanner(System.in);
         if (node != null) {
@@ -274,10 +223,10 @@ public class ArbreBinari implements Serializable {
                     try {
                         int puntuacion = scanner.nextInt();
                         node.contingut.setPuntuacion(puntuacion);
-                        break; // 退出循环，因为输入是有效的整数
+                        break; // Salir del bucle porque la entrada es un entero válido
                     } catch (InputMismatchException e) {
                         System.out.println("Error: Ingresa un valor numérico válido.");
-                        // 清除无效输入
+                        // Borrar entradas no válidas
                         scanner.next();
                         System.out.println("Equipo " + node.contingut.getNombre() + " - Ronda " + (profunditat - ronda) + " - Puntuación: ");
                     }
@@ -285,24 +234,6 @@ public class ArbreBinari implements Serializable {
             }
             mostrarRecursivament2(node.esq, i + 1, ronda);
             mostrarRecursivament2(node.dret, i + 1, ronda);
-        }
-    }
-    //可以删除
-    public void mostrarArbre() {
-        mostrarArbreRecursivament(arrel, 0);
-    }
-
-    private void mostrarArbreRecursivament(Node node, int nivel) {
-        if (node != null) {
-            mostrarArbreRecursivament(node.dret, nivel + 1);
-
-            for (int i = 0; i < nivel; i++) {
-                System.out.print("    "); // 缩进，使树形结构更清晰
-            }
-
-            System.out.println(node.contingut);
-
-            mostrarArbreRecursivament(node.esq, nivel + 1);
         }
     }
     public Node ParaGanadorAvanza(){

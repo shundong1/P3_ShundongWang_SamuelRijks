@@ -65,9 +65,8 @@ public class Main {
             }
 
         } while (opcio != 1 && opcio != 2);
-        //打印树
-        arbreBinari.mostrarArbre();
-        //显示现在是第几轮
+
+        //Mostrar la ronda actual
         int rondaActual = arbreBinari.rondaActual();
 
         int a=arbreBinari.getProfunditat()-rondaActual;
@@ -89,11 +88,11 @@ public class Main {
             // 检查是否是大于2的2的次方
             if (numEquipos >=2 && (numEquipos & (numEquipos - 1)) == 0) {
                 nombresEquipos = new ArrayList<>(List.of(equiposArray));
-                break;  // 输入符合要求，退出循环
+                break;  // la entrada cumple los requisitos, bucle de salida
             } else {
                 Scanner scanner = new Scanner(System.in);
                 System.out.println("Has d'introduir una quantitat major a 2 i que sigui una potència de 2.");
-                // 重新询问用户输入
+                // Volver a preguntar al usuario
                 System.out.print("Introdueix els noms dels equips separats per ; : ");
                 input = scanner.next();
             }
@@ -118,7 +117,7 @@ public class Main {
             System.out.print("Elija una opción (1, 2 o 3): ");
 
             opcion = scanner.nextInt();
-            scanner.nextLine(); // 消耗换行符
+            scanner.nextLine();
 
             if (opcion == 1) {
                 // Muestra una ronda
@@ -126,11 +125,11 @@ public class Main {
 
             } else if (opcion == 2) {
                 if(ronda!=0){// Introducir resultados en la ronda actual
-                // 在这里调用相应的方法
-                //在这里我要先展示每一回合的每一个equib,然后询问客户然后读取客户的输入然后setPuntuacion，然后分数高的晋级
-                arbreBinari.mostrar2(ronda);
+                    // Llama al método apropiado aquí
+                    // Aquí voy a mostrar cada equib para cada ronda, luego preguntar al cliente, luego leer las entradas del cliente, luego setPuntuacion, luego el que tenga el puntaje mas alto avanza al siguiente nivel.
+                    arbreBinari.mostrar2(ronda);
 
-                arbreBinari.ParaGanadorAvanza();
+                    arbreBinari.ParaGanadorAvanza();
 
                 }else{
                     System.out.println("El juego ha terminado ");
@@ -138,12 +137,12 @@ public class Main {
                 }
             } else if (opcion == 3) {
                 // Guardar el árbol y salir
-                // 在这里调用保存树到文件的方法
-                if(nomFitxer==null){
-                System.out.println("Escriu el nom del arxiu");
 
-                System.out.print("Introdueix el nom del fitxer: ");
-                nomFitxer = scanner.next();
+                if(nomFitxer==null){
+                    System.out.println("Escriu el nom del arxiu");
+
+                    System.out.print("Introdueix el nom del fitxer: ");
+                    nomFitxer = scanner.next();
                 }
                 arbreBinari.save(nomFitxer);
 
@@ -161,7 +160,7 @@ public class Main {
         String line;
 
         while ((line = reader.readLine()) != null) {
-            // 如果该行不为空，则增加计数
+            // Si la línea no está vacía, incrementa la cuenta
             if (!line.trim().isEmpty()) {
                 count++;
             }
@@ -170,7 +169,7 @@ public class Main {
         return count;
     }
     public static int calculateDepth(int totalNodes) {
-        // 使用 log2 函数计算深度
+        // Calcular la profundidad utilizando la función log2
         return (int) Math.ceil(Math.log(totalNodes + 1) / Math.log(2));
     }
 }
