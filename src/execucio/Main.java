@@ -74,7 +74,6 @@ public class Main {
 
         runMainProgram(arbreBinari,rondaActual,nomFitxer);
 
-
         scanner.close();
     }
 
@@ -85,7 +84,6 @@ public class Main {
             String[] equiposArray = input.split(";");
             int numEquipos = equiposArray.length;
 
-            // 检查是否是大于2的2的次方
             if (numEquipos >=2 && (numEquipos & (numEquipos - 1)) == 0) {
                 nombresEquipos = new ArrayList<>(List.of(equiposArray));
                 break;  // la entrada cumple los requisitos, bucle de salida
@@ -104,8 +102,6 @@ public class Main {
 
     private static void runMainProgram(ArbreBinari arbreBinari,int ronda,String nomFitxer) throws Exception {
         Scanner scanner = new Scanner(System.in);
-
-
         int opcion;
 
         do {
@@ -125,8 +121,6 @@ public class Main {
 
             } else if (opcion == 2) {
                 if(ronda!=0){// Introducir resultados en la ronda actual
-                    // Llama al método apropiado aquí
-                    // Aquí voy a mostrar cada equib para cada ronda, luego preguntar al cliente, luego leer las entradas del cliente, luego setPuntuacion, luego el que tenga el puntaje mas alto avanza al siguiente nivel.
                     arbreBinari.mostrar2(ronda);
 
                     arbreBinari.ParaGanadorAvanza();
@@ -169,7 +163,7 @@ public class Main {
         return count;
     }
     public static int calculateDepth(int totalNodes) {
-        // Calcular la profundidad utilizando la función log2
+        // Calcular la profundidad
         return (int) Math.ceil(Math.log(totalNodes + 1) / Math.log(2));
     }
 }

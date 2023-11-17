@@ -5,12 +5,7 @@ import java.util.*;
 
 public class ArbreBinari implements Serializable {
 
-
     private class Node {
-        public Equip getContingut() {
-            return contingut;
-        }
-
         Equip contingut;
         Node esq, dret;
 
@@ -55,7 +50,7 @@ public class ArbreBinari implements Serializable {
 
     private int profunditat;
 
-    // Constructor que toma un array de cadenas como argumentos
+    // Constructor que toma una list de strings
     public ArbreBinari(List<String> nombresEquipos) {
         // Este crea un nuevo torneo, un nuevo archivo, y crea el torneo basado en el número de equipos de entrada
 
@@ -71,7 +66,7 @@ public class ArbreBinari implements Serializable {
         this.profunditat = profunditat;
         arrel = preorderLoad(bur, profunditat-1);
 
-        // Si arrel és nul, vol dir que la lectura del fitxer ha fallat o que el fitxer està buit.
+        // Si arrel és null, vol dir que la lectura del fitxer ha fallat o que el fitxer està buit.
         if (arrel == null) {
             System.out.println("Problema en llegir dades del fitxer i crear un arbre");
         }
@@ -183,8 +178,6 @@ public class ArbreBinari implements Serializable {
     }
 
 
-
-
     // Obtener la ronda actual
     public int rondaActual() {
         return calculateProfunditatRecursivament(arrel);
@@ -200,14 +193,6 @@ public class ArbreBinari implements Serializable {
             return Math.max(esqProfunditat, dretProfunditat) + 1;
         }
     }
-
-    // Método de solicitud de resultados
-    public void demanarResultats() {
-        if(arrel != null){
-            arrel.contingut.toSave();
-        }
-    }
-
     public void mostrar2(int ronda) {
         System.out.println("Ronda " + (profunditat - ronda) + ":");
         mostrarRecursivament2(arrel, 1, ronda);

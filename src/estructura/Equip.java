@@ -2,8 +2,6 @@ package estructura;
 
 public class Equip implements Comparable<Equip>{
 
-
-
     private String nombre; // Nombre del equipo
     private int puntuacion; // Puntuación
 
@@ -35,4 +33,6 @@ public class Equip implements Comparable<Equip>{
     public String getNombre() {
         return nombre;
     }
+
+    public boolean haJugado() {return puntuacion != -1;}
 }
